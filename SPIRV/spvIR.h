@@ -172,6 +172,9 @@ public:
 
     Function& getParent() const { return parent; }
     void addInstruction(Instruction* inst);
+    // Insert an instruction either at the end of the block, or prepend it in
+    // front of potentially existing terminating instructions.
+    void insertInstructionBeforeTerminal(Instruction* inst);
     void addPredecessor(Block* pred) { predecessors.push_back(pred); }
     void addLocalVariable(Instruction* inst) { localVariables.push_back(inst); }
     int getNumPredecessors() const { return (int)predecessors.size(); }
@@ -362,6 +365,30 @@ __inline void Block::addInstruction(Instruction* inst)
     instructions.push_back(inst);
     if (inst->getResultId())
         parent.getParent().mapInstruction(inst);
+}
+
+inline void Block::insertInstructionBeforeTerminal(Instruction* inst)
+{
+    switch (instructions.back()->getOpCode()) {
+    case OpBranchConditional:
+    case OpSwitch:
+        instructions.insert(instructions.end() - 2, inst);
+        break;
+    case OpBranch:
+        if(instructions.size() > 1 && (instructions[instructions.size() - 2]->getOpCode() == OpLoopMerge))
+            instructions.insert(instructions.end() - 2, inst);
+        else
+            instructions.insert(instructions.end() - 1, inst);
+        break;
+    case OpKill:
+    case OpReturn:
+    case OpReturnValue:
+        instructions.insert(--instructions.end(), inst);
+        break;
+    default:
+        instructions.push_back(inst);
+        break;
+    }
 }
 
 };  // end spv namespace
