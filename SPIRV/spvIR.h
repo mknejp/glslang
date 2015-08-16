@@ -180,6 +180,14 @@ public:
     int getNumPredecessors() const { return (int)predecessors.size(); }
     void setUnreachable() { unreachable = true; }
     bool isUnreachable() const { return unreachable; }
+    bool isPredecessorOf(const Block* pred) const
+    {
+        return pred && pred->hasPredecessor(this);
+    }
+    bool hasPredecessor(const Block* pred) const
+    {
+        return std::find(predecessors.begin(), predecessors.end(), pred) != predecessors.end();
+    }
 
     bool isTerminated() const
     {
