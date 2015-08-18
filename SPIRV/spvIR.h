@@ -172,6 +172,8 @@ public:
 
     Function& getParent() const { return parent; }
     void addInstruction(Instruction* inst);
+    // Insert a new instruction at the front of the block after the label
+    void addInstructionAtFront(Instruction* inst);
     // Insert an instruction either at the end of the block, or prepend it in
     // front of potentially existing terminating instructions.
     void insertInstructionBeforeTerminal(Instruction* inst);
@@ -374,6 +376,17 @@ __inline void Block::addInstruction(Instruction* inst)
     if (inst->getResultId())
         parent.getParent().mapInstruction(inst);
 }
+
+inline void Block::addInstructionAtFront(Instruction* inst)
+{
+    assert(!instructions.empty());
+    assert(instructions.front()->getOpCode() == OpLabel);
+    assert(inst->getOpCode() != OpLabel);
+    instructions.insert(++instructions.begin(), inst);
+    if (inst->getResultId())
+        parent.getParent().mapInstruction(inst);
+}
+
 
 inline void Block::insertInstructionBeforeTerminal(Instruction* inst)
 {
