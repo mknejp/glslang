@@ -117,6 +117,18 @@ public:
     Id getIdOperand(int op) const { return operands[op]; }
     unsigned int getImmediateOperand(int op) const { return operands[op]; }
     const char* getStringOperand() const { return originalString.c_str(); }
+    void rewriteOperands(Id oldOperand, Id newOperand)
+    {
+        for(auto i = 0u; i < operands.size(); ++i)
+        {
+            rewriteOperand(oldOperand, newOperand, i);
+        }
+    }
+    void rewriteOperand(Id oldOperand, Id newOperand, unsigned int index)
+    {
+        if(operands[index] == oldOperand)
+            operands[index] = newOperand;
+    }
 
     // Write out the binary form.
     void dump(std::vector<unsigned int>& out) const
@@ -161,6 +173,8 @@ protected:
 //
 
 class Block {
+  using Instructions = std::vector<Instruction*>;
+
 public:
     Block(Id id, Function& parent);
     virtual ~Block()
@@ -190,6 +204,12 @@ public:
     {
         return std::find(predecessors.begin(), predecessors.end(), pred) != predecessors.end();
     }
+
+    // Iterators over the block's instruction stream
+    Instructions::iterator begin() { return instructions.begin(); }
+    Instructions::iterator end() { return instructions.end(); }
+    Instructions::const_iterator begin() const { return instructions.begin(); }
+    Instructions::const_iterator end() const { return instructions.end(); }
 
     bool isTerminated() const
     {
@@ -228,7 +248,7 @@ protected:
     // To enforce keeping parent and ownership in sync:
     friend Function;
 
-    std::vector<Instruction*> instructions;
+    Instructions instructions;
     std::vector<Block*> predecessors;
     std::vector<Instruction*> localVariables;
     Function& parent;
