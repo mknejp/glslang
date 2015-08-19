@@ -879,6 +879,16 @@ void Builder::createStore(Id rValue, Id lValue)
 }
 
 // Comments in header
+Id Builder::createCopyObject(Id value)
+{
+  Instruction* copy = new Instruction(getUniqueId(), getTypeId(value), OpCopyObject);
+  copy->addIdOperand(value);
+  buildPoint->addInstruction(copy);
+
+  return copy->getResultId();
+}
+
+// Comments in header
 Id Builder::createLoad(Id lValue)
 {
     Instruction* load = new Instruction(getUniqueId(), getDerefTypeId(lValue), OpLoad);

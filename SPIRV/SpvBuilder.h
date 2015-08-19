@@ -221,6 +221,9 @@ public:
     // Store into an Id and return the l-value
     void createStore(Id rValue, Id lValue);
 
+    // Create a copy of an existing object
+    Id createCopyObject(Id value);
+
     // Load from an Id and return it
     Id createLoad(Id lValue);
 
