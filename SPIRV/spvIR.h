@@ -192,8 +192,10 @@ public:
     // front of potentially existing terminating instructions.
     void insertInstructionBeforeTerminal(Instruction* inst);
     void addPredecessor(Block* pred) { predecessors.push_back(pred); }
+    void addSuccessor(Block* succ) { successors.push_back(succ); }
     void addLocalVariable(Instruction* inst) { localVariables.push_back(inst); }
     int getNumPredecessors() const { return (int)predecessors.size(); }
+    int getNumSuccessors() const { return (int)successors.size(); }
     void setUnreachable() { unreachable = true; }
     bool isUnreachable() const { return unreachable; }
     bool isPredecessorOf(const Block* pred) const
@@ -204,6 +206,7 @@ public:
     {
         return std::find(predecessors.begin(), predecessors.end(), pred) != predecessors.end();
     }
+    Block* getSuccessor(int i) const { return successors[i]; }
 
     // Iterators over the block's instruction stream
     Instructions::iterator begin() { return instructions.begin(); }
@@ -250,6 +253,7 @@ protected:
 
     Instructions instructions;
     std::vector<Block*> predecessors;
+    std::vector<Block*> successors;
     std::vector<Instruction*> localVariables;
     Function& parent;
 

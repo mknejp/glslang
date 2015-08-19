@@ -1832,7 +1832,10 @@ void Builder::makeSwitch(Id selector, int numSegments, std::vector<int>& caseVal
     switchInst->addIdOperand(defaultSegment >= 0 ? segmentBlocks[defaultSegment]->getId() : mergeBlock->getId());
     for (int i = 0; i < (int)caseValues.size(); ++i) {
         switchInst->addImmediateOperand(caseValues[i]);
-        switchInst->addIdOperand(segmentBlocks[valueIndexToSegment[i]]->getId());
+        Block* target = segmentBlocks[valueIndexToSegment[i]];
+        switchInst->addIdOperand(target->getId());
+        target->addPredecessor(buildPoint);
+        buildPoint->addSuccessor(target);
     }
     buildPoint->addInstruction(switchInst);
 
@@ -2300,6 +2303,7 @@ void Builder::createBranch(Block* block)
     branch->addIdOperand(block->getId());
     buildPoint->addInstruction(branch);
     block->addPredecessor(buildPoint);
+    buildPoint->addSuccessor(block);
 }
 
 void Builder::createMerge(Op mergeCode, Block* mergeBlock, unsigned int control)
@@ -2319,6 +2323,8 @@ void Builder::createConditionalBranch(Id condition, Block* thenBlock, Block* els
     buildPoint->addInstruction(branch);
     thenBlock->addPredecessor(buildPoint);
     elseBlock->addPredecessor(buildPoint);
+    buildPoint->addSuccessor(thenBlock);
+    buildPoint->addSuccessor(elseBlock);
 }
 
 void Builder::dumpInstructions(std::vector<unsigned int>& out, const std::vector<Instruction*>& instructions) const
