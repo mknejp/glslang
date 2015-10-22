@@ -60,6 +60,8 @@ namespace spv {
 class Builder {
 public:
     Builder(unsigned int userNumber);
+    Builder(Builder&&);
+    Builder& operator=(Builder&&);
     virtual ~Builder();
 
     static const int maxMatrixSize = 4;

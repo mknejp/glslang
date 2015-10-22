@@ -70,6 +70,9 @@ Builder::Builder(unsigned int userNumber) :
     clearAccessChain();
 }
 
+Builder::Builder(Builder&&) = default;
+Builder& Builder::operator=(Builder&&) = default;
+
 Builder::~Builder()
 {
 }

@@ -322,6 +322,8 @@ protected:
 class Module {
 public:
     Module() {}
+    Module(Module&&) = default;
+    Module& operator=(Module&&) = default;
     virtual ~Module()
     {
         // TODO delete things
