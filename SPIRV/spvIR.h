@@ -196,6 +196,7 @@ public:
     void addLocalVariable(Instruction* inst) { localVariables.push_back(inst); }
     int getNumPredecessors() const { return (int)predecessors.size(); }
     int getNumSuccessors() const { return (int)successors.size(); }
+    int getNumInstructions() const { return (int)instructions.size(); }
     void setUnreachable() { unreachable = true; }
     bool isUnreachable() const { return unreachable; }
     bool isPredecessorOf(const Block* pred) const
